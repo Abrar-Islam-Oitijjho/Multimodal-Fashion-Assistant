@@ -3,16 +3,21 @@ from PIL import Image
 import os
 import numpy as np
 import faiss
-import display
+import math
+import matplotlib.pyplot as plt
 
 from embeddings_generator_helper import embeddings_generator_and_retreival
 
 
 class chatbot():
 
-    def __init__(self, model, processor):
-            self.model = model
-            self.processor = processor
+    def __init__(self, reasoning_model, reasoning_processor, retreiving_model, retreiving_processor):
+            
+        self.reasoning_model = reasoning_model
+        self.reasoning_processor = reasoning_processor
+        
+        self.retreiving_model = retreiving_model
+        self.retreiving_processor = retreiving_processor
     
     def generate_description(self, conversation, user_query, user_image):
     
@@ -37,24 +42,24 @@ class chatbot():
     
         conversation_followup = [{"role": "user", "content": content_list}]
         
-        text_prompt = self.processor.apply_chat_template(conversation_followup, add_generation_prompt=True)
+        text_prompt = self.reasoning_processor.apply_chat_template(conversation_followup, add_generation_prompt=True)
     
         inputs_kwargs = {"text": text_prompt, "return_tensors": "pt"}
     
         if user_image:
             inputs_kwargs["images"] = user_image
     
-        inputs = self.processor(**inputs_kwargs).to(self.model.device)
+        inputs = self.reasoning_model(**inputs_kwargs).to(self.reasoning_model.device)
     
         with torch.no_grad():
-            output_ids = self.model.generate(**inputs, max_new_tokens=80)
+            output_ids = self.reasoning_model.generate(**inputs, max_new_tokens=80)
         
         generated_ids = [
             output_ids[len(input_ids):]
             for input_ids, output_ids in zip(inputs.input_ids, output_ids)
         ]
         
-        output_text = self.processor.batch_decode(
+        output_text = self.reasoning_processor.batch_decode(
             generated_ids,
             skip_special_tokens=True,
             clean_up_tokenization_spaces=True
@@ -68,7 +73,7 @@ class chatbot():
     
     def retreive_index(self, faiss_index_directory, description, user_query, user_image, top_k):
 
-        emb_ = embeddings_generator_and_retreival(self.model, self.processor)        
+        emb_ = embeddings_generator_and_retreival(self.retreiving_model, self.retreiving_processor)        
         dist_img = idx_img = dist_text = idx_text = np.array([])
     
         img_faiss_index =  faiss.read_index(os.path.join(faiss_index_directory, "faiss_image_siglip2_base.index"))
@@ -117,12 +122,15 @@ class chatbot():
             return text_dict
         
     
-    def retreive_top_products(self, combined_scores, top_k, master_df):
-        top_k = 5
+    def retreive_top_products(self, combined_scores, master_df, top_k):
+        
         top_k_keys = [k for k, v in sorted(combined_scores.items(), key=lambda item: item[1], reverse=True)[:top_k]]
         suggested_images = []
+        
+        rows = math.ceil(top_k / 3)  # 3 is the max number of images per row
+        plt.figure(figsize=(4 * 3, 4 * rows))  # 4 is the width/height of one image in inches for the figure size
     
-        for idx in top_k_keys:
+        for i, idx in enumerate(top_k_keys):
             image_id = master_df.iloc[idx]['image_id']
             item_id = master_df.iloc[idx]['item_id']
             
@@ -130,6 +138,11 @@ class chatbot():
             retreival_path = os.path.join(image_directory, f"{image_id}_{item_id}.jpg")
             image = Image.open(retreival_path).convert("RGB")
             suggested_images.append(image)
-            display(image)
+            plt.subplot(rows, 3, i + 1)
+            plt.imshow(image)
+            plt.axis('off')
+            
+        plt.tight_layout()
+        plt.show()
     
         return top_k_keys, suggested_images
