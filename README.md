@@ -1,4 +1,3 @@
-```markdown
 # 🚀 Multimodal Fashion Assistant
 
 A cutting-edge fashion assistant leveraging multimodal AI for personalized style recommendations and interactive fashion experiences.
@@ -22,7 +21,7 @@ Your personal AI stylist, combining visual search, attribute filtering, and conv
 ## 📋 Table of Contents
 
 - [About](#about)
-- [Features](#features)
+- [Features](#✨-features)
 - [Demo](#demo)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
