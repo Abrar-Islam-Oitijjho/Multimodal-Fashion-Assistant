@@ -21,7 +21,7 @@ Your personal AI stylist, combining visual search, attribute filtering, and conv
 ## 📋 Table of Contents
 
 - [About](#about)
-- [Features](#✨-features)
+- [Features](#features)
 - [Demo](#demo)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
@@ -38,22 +38,21 @@ Your personal AI stylist, combining visual search, attribute filtering, and conv
 
 ## About
 
-The Multimodal Fashion Assistant is an innovative project that aims to revolutionize the way users interact with fashion. By combining state-of-the-art AI models, including SigLIP2 for robust image and text embeddings and Qwen-VL (2B) for advanced reasoning capabilities, this assistant provides a seamless and personalized fashion experience. It addresses the challenges of finding specific clothing items, exploring style options, and receiving tailored recommendations in an intuitive manner.
+The Multimodal Fashion Assistant is a retrieval and reasoning system built on two models: SigLIP2-base for image and text embeddings, and Qwen-VL (2B) for multimodal reasoning. The system processes images and text to generate meaningful representations, runs similarity search, and handles attribute-based queries. It can operate in multimodal mode or as a single-mode (image-only or text-only) retrieval tool.
 
-This project is designed for fashion enthusiasts, stylists, e-commerce platforms, and anyone seeking to enhance their fashion journey. The core architecture revolves around multimodal learning, where image and text data are processed to create meaningful representations. These embeddings are then used for similarity searches, attribute-based filtering, and engaging in interactive multi-turn conversations. The use of SigLIP2 ensures high-quality embeddings, while Qwen-VL enables the assistant to understand and respond to complex fashion-related queries.
+The pipeline uses SigLIP2 to extract high-quality embeddings from user input, while Qwen-VL interprets queries, extracts product attributes, and resolves complex fashion-related questions. Users can upload an image, describe a product, or refine their request through follow-up prompts. The system then returns the closest matching items based on visual and semantic similarity.
 
-What sets this project apart is its ability to understand and reason about fashion in a way that mimics human expertise. Users can upload images of clothing, describe desired attributes, or engage in conversations to refine their search. The assistant can then provide accurate and relevant recommendations, making the fashion discovery process more efficient and enjoyable.
+This project focuses on practical, fast, and accurate fashion retrieval without requiring a dedicated front end. It acts as a flexible backend module that supports image search, text search, and multimodal reasoning for fashion data.
 
-## ✨ Features
+##  Features
 
 - 🎯 **Similarity Search**: Find visually similar clothing items using image embeddings.
-- ⚡ **Attribute Filtering**: Filter fashion items based on specific attributes like color, style, and material.
+- ⚡ **Attribute Filtering**: Filter fashion items based on specific attributes like color, style, material and more.
 - 🤖 **Interactive Conversations**: Engage in multi-turn conversations to refine your fashion search.
 - 🎨 **Personalized Recommendations**: Receive tailored style suggestions based on your preferences.
-- 📱 **Cross-Platform Compatibility**: Accessible via web and mobile interfaces.
 - 🛠️ **Extensible Architecture**: Easily integrate new models and features.
 
-## 🎬 Demo
+##  Demo
 
 🔗 **Live Demo**: [https://your-demo-url.com](https://your-demo-url.com)
 
@@ -67,7 +66,7 @@ What sets this project apart is its ability to understand and reason about fashi
 ![Conversation Interface](screenshots/conversation_ui.png)
 *Interactive conversation UI for personalized recommendations*
 
-## 🚀 Quick Start
+##  Quick Start
 
 Clone and run the Jupyter Notebook:
 
@@ -79,7 +78,7 @@ jupyter notebook Multimodal_Fashion_Assistant.ipynb
 
 Open the notebook in your browser and follow the instructions.
 
-## 📦 Installation
+##  Installation
 
 ### Prerequisites
 
@@ -101,9 +100,10 @@ cd Multimodal-Fashion-Assistant
 2.  Create a virtual environment (recommended):
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Linux/macOS
-venv\Scripts\activate  # On Windows
+conda create -n venv python=3.11 anaconda
+conda activate venv
+conda install ipykernel
+ipython kernel install --user --name=kernelname
 ```
 
 3.  Install dependencies:
@@ -114,7 +114,7 @@ pip install -r requirements.txt
 
 4.  Download necessary model weights (refer to the notebook for specific instructions).
 
-## 💻 Usage
+##  Usage
 
 1.  Open the Jupyter Notebook:
 
@@ -143,7 +143,7 @@ response = assistant.chat("I'm looking for a red dress for a party.")
 print(response)
 ```
 
-## ⚙️ Configuration
+##  Configuration
 
 ### Environment Variables
 
@@ -174,7 +174,7 @@ TEXT_API_KEY=your_text_api_key
 }
 ```
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Multimodal-Fashion-Assistant/
@@ -190,7 +190,7 @@ Multimodal-Fashion-Assistant/
 └── 📄 LICENSE                 # License file
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) (placeholder) for details.
 
@@ -214,7 +214,7 @@ Deployment instructions will be added here.
 
 Frequently asked questions will be added here.
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -227,7 +227,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 -   ❌ Liability
 -   ❌ Warranty
 
-## 💬 Support
+##  Support
 
 -   📧 **Email**: your.email@example.com
 -   💬 **Discord**: [Join our community](https://discord.gg/your-invite)
@@ -235,7 +235,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 -   📖 **Documentation**: [Full Documentation](https://docs.your-site.com)
 -   💰 **Sponsor**: [Support the project](https://github.com/sponsors/Abrar-Islam-Oitijjho)
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 -   🎨 **Design inspiration**: [Dribbble](https://dribbble.com/)
 -   📚 **Libraries used**:
