@@ -6,7 +6,6 @@ Your personal AI stylist, combining visual search, attribute filtering, and conv
 
 ##
 
-![License](https://img.shields.io/github/license/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant)
 ![GitHub stars](https://img.shields.io/github/stars/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant?style=social)
 ![GitHub issues](https://img.shields.io/github/issues/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant)
@@ -203,7 +202,6 @@ Multimodal-Fashion-Assistant/
 
 ├── 📄 requirements.txt        # Project dependencies
 ├── 📄 README.md               # Project documentation
-└── 📄 LICENSE                 # License file
 ```
 
 ##  Contributing
