@@ -22,17 +22,11 @@ Your personal AI stylist, combining visual search, attribute filtering, and conv
 
 - [About](#about)
 - [Features](#features)
-- [Demo](#demo)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Configuration](#configuration)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [FAQ](#faq)
-- [License](#license)
 - [Support](#support)
 - [Acknowledgments](#acknowledgments)
 
@@ -49,22 +43,7 @@ This project focuses on practical, fast, and accurate fashion retrieval without 
 - 🎯 **Similarity Search**: Find visually similar clothing items using image embeddings.
 - ⚡ **Attribute Filtering**: Filter fashion items based on specific attributes like color, style, material and more.
 - 🤖 **Interactive Conversations**: Engage in multi-turn conversations to refine your fashion search.
-- 🎨 **Personalized Recommendations**: Receive tailored style suggestions based on your preferences.
 - 🛠️ **Extensible Architecture**: Easily integrate new models and features.
-
-##  Demo
-
-🔗 **Live Demo**: [https://your-demo-url.com](https://your-demo-url.com)
-
-### Screenshots
-![Fashion Search Interface](screenshots/fashion_search.png)
-*Main interface showing image upload and text search options*
-
-![Attribute Filtering](screenshots/attribute_filter.png)
-*Attribute filtering options for refining search results*
-
-![Conversation Interface](screenshots/conversation_ui.png)
-*Interactive conversation UI for personalized recommendations*
 
 ##  Quick Start
 
@@ -82,10 +61,10 @@ Open the notebook in your browser and follow the instructions.
 
 ### Prerequisites
 
-- Python 3.8+
-- Jupyter Notebook
-- PyTorch
-- Transformers
+- Python 3.11+
+- Jupyter Notebook 7.4.5
+- PyTorch 2.9.1+cu126
+- Transformers 5.0.0.dev0
 - Other dependencies listed in `requirements.txt`
 
 ### Steps
@@ -134,76 +113,81 @@ user_query = "Do you have any dress like this?"
 image_directory = r"../Data/Example"
 image_path = os.path.join(image_directory, "internet_example13.jpg")
 image = Image.open(image_path).convert("RGB")
-
-conversation = []
-output_text = chtbot.generate_description(conversation=conversation, user_query=user_query, user_image=image)
-print(output_text[0])
 ```
 
 ### Example Output
 
-The user wants a red and black plaid dress with a Peter Pan collar. The dress has a fit-and-flare silhouette and long sleeves. It is made of a material that appears to be a blend of cotton and polyester. The dress features a button-down front and a waistband with a belt. The notable features of the dress include the Peter Pan collar, the fit-and-flare silhouette.
+```
+The user wants a red and black plaid dress with a Peter Pan collar. The dress has a fit-and-flare silhouette and long sleeves.
+It is made of a material that appears to be a blend of cotton and polyester. The dress features a button-down front and a waistband with a belt.
+The notable features of the dress include the Peter Pan collar, the fit-and-flare silhouette.
+```
 
+### Retrieved Images (Top 2)
 <p>
-  <img src="assets/output_0_0.jpg" width="180">
-  <img src="assets/output_0_1.jpg" width="180">
-  <img src="assets/output_0_2.jpg" width="180">
-  <img src="assets/output_0_3.jpg" width="180">
   <img src="assets/output_0_4.jpg" width="180">
-  <img src="assets/output_0_5.jpg" width="180">
+  <img src="assets/output_0_0.jpg" width="180">
 </p>
 
 
-### Example: Conversational Interaction
+### Example: Follow-up Conversation
 
 ```python
-# Example code (Illustrative - refer to notebook for actual implementation)
-response = assistant.chat("I'm looking for a red dress for a party.")
-print(response)
+user_query = "Do you have the dress in blue color?"
 ```
 
-##  Configuration
+### Example Output
 
-### Environment Variables
-
-Create a `.env` file (optional) in the root directory to configure API keys and other settings:
-
-```env
-# API Keys
-IMAGE_API_KEY=your_image_api_key
-TEXT_API_KEY=your_text_api_key
+```
+The user wants a blue dress with a Peter Pan collar, a fit-and-flare silhouette, long sleeves, and a waistband with a belt.
+The dress is made of a material that appears to be a blend of cotton and polyester.
+The notable features of the dress include the Peter Pan collar, the fit-and-flare silhouette, and the waistband with a belt.
 ```
 
-### Configuration File (Example)
+### Retrieved Images (Top 2)
+<p>
+  <img src="assets/output_1_4.jpg" width="180">
+  <img src="assets/output_1_3.jpg" width="180">
+</p>
 
-```json
-{
-  "model_settings": {
-    "siglip2_model": "path/to/siglip2/model",
-    "qwen_vl_model": "path/to/qwen_vl/model"
-  },
-  "search_parameters": {
-    "top_k": 10,
-    "attribute_weights": {
-      "color": 0.5,
-      "style": 0.3,
-      "material": 0.2
-    }
-  }
-}
+### Example: Second Follow-up Conversation
+
+```python
+user_query = "Do you have any t-shirt that matches with this blue dress?"
 ```
+
+### Example Output
+
+```
+The user wants a blue t-shirt that matches the blue dress they mentioned earlier.
+The t-shirt should have a Peter Pan collar, a fit-and-flare silhouette, long sleeves, and a waistband with a belt.
+The material should be a blend of cotton and polyester. The notable features of the t-shirt include the Peter Pan collar, the fit-and-flare silhouette, and the waistband with
+```
+
+### Retrieved Images (Top 2)
+<p>
+  <img src="assets/output_2_1.jpg" width="180">
+  <img src="assets/output_2_2.jpg" width="180">
+</p>
 
 ##  Project Structure
 
 ```
 Multimodal-Fashion-Assistant/
-├── 📁 data/                   # Fashion dataset and image files
-├── 📁 models/                 # Pre-trained model weights
-├── 📁 notebooks/              # Jupyter notebooks for experimentation
-├── 📁 src/                    # Source code for the fashion assistant
-│   ├── 📄 fashion_assistant.py  # Core class for the assistant
-│   ├── 📄 utils.py              # Utility functions
-│   └── 📄 api.py                # API endpoints (if applicable)
+├── 📁 Data/                                 # Fashion dataset and image files
+├── 📁 CSVs/                                 # Generated metadata saved in csv format
+├── 📁 assets/                               # assets to the project
+├── 📁 Code/                                 # Source code for the fashion assistant
+│   ├── 📄 data_preprocessing.ipynb          # For preprocessing the data
+│   ├── 📄 data_preprocessing_helper.py      # Utility functions for data-preprocessing
+│   └── 📄 description_generator.ipynb       # Generate descriptions for each image
+    └── 📄 description_generator.ipynb       # Generate descriptions for each image
+    └── 📄 description_generator_helper.py   # Utility functions for descriptions generator
+    └── 📄 embedding_generator.ipynb         # Generates text and image embedding for each image
+    └── 📄 embeddings_generator_helper.py    # Utility functions for embedding generator
+    └── 📄 multimodal_reasoning.ipynb        # Multimodal chatbot
+    └── 📄 multimodal_reasoning_helper.py    # Utility functions for multimodal chatbot
+
 ├── 📄 requirements.txt        # Project dependencies
 ├── 📄 README.md               # Project documentation
 └── 📄 LICENSE                 # License file
@@ -211,7 +195,7 @@ Multimodal-Fashion-Assistant/
 
 ##  Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) (placeholder) for details.
+We welcome contributions!
 
 ### Quick Contribution Steps
 
@@ -221,38 +205,10 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) (
 4.  📤 Push to the branch (`git push origin feature/AmazingFeature`)
 5.  🔃 Open a Pull Request
 
-## Testing
-
-Testing instructions and commands will be added here.
-
-## Deployment
-
-Deployment instructions will be added here.
-
-## FAQ
-
-Frequently asked questions will be added here.
-
-##  License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-### License Summary
-
--   ✅ Commercial use
--   ✅ Modification
--   ✅ Distribution
--   ✅ Private use
--   ❌ Liability
--   ❌ Warranty
-
 ##  Support
 
--   📧 **Email**: your.email@example.com
--   💬 **Discord**: [Join our community](https://discord.gg/your-invite)
+-   📧 **Email**: abraroitijjho35@gmail.com
 -   🐛 **Issues**: [GitHub Issues](https://github.com/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant/issues)
--   📖 **Documentation**: [Full Documentation](https://docs.your-site.com)
--   💰 **Sponsor**: [Support the project](https://github.com/sponsors/Abrar-Islam-Oitijjho)
 
 ##  Acknowledgments
 
@@ -260,6 +216,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 -   📚 **Libraries used**:
     -   [PyTorch](https://pytorch.org/) - Deep learning framework
     -   [Transformers](https://huggingface.co/transformers/) - NLP library
--   👥 **Contributors**: Thanks to all [contributors](https://github.com/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant/contributors)
+    -   [Anaconda](https://anaconda.org/) – Python distribution with environment and package management
 -   🌟 **Special thanks**: To the open-source community for their invaluable contributions.
-```
