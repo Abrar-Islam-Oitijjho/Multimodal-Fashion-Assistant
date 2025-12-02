@@ -1,8 +1,6 @@
 # 🤖 Multimodal Fashion Assistant
 
-A cutting-edge fashion assistant leveraging multimodal AI for personalized style recommendations and interactive fashion experiences.
-
-Your personal AI stylist, combining visual search, attribute filtering, and conversational AI to revolutionize your wardrobe.
+An AI-powered fashion assistant that retrieves and reasons over images and text to deliver precise and relevant fashion recommendations using VLM models.
 
 ##
 
