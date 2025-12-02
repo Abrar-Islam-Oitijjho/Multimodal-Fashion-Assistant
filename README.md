@@ -124,6 +124,9 @@ image_directory = r"../Data/Example"
 image_path = os.path.join(image_directory, "internet_example13.jpg")
 image = Image.open(image_path).convert("RGB")
 ```
+### Example Input
+
+<img src="assets/internet_example13.jpg" width="180">
 
 ### Example Output
 
