@@ -1,4 +1,4 @@
-# 🚀 Multimodal Fashion Assistant
+# 🤖 Multimodal Fashion Assistant
 
 A cutting-edge fashion assistant leveraging multimodal AI for personalized style recommendations and interactive fashion experiences.
 
