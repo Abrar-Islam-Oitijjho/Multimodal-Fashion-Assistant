@@ -167,7 +167,7 @@ The material should be a blend of cotton and polyester. The notable features of 
 ### Retrieved Images (Top 2)
 <p>
   <img src="assets/output_2_1.jpg" width="180">
-  <img src="assets/output_2_2.jpg" width="180">
+  <img src="assets/output_2_0.jpg" width="180">
 </p>
 
 ##  Project Structure
