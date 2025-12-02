@@ -22,6 +22,7 @@ Your personal AI stylist, combining visual search, attribute filtering, and conv
 
 - [About](#about)
 - [Features](#features)
+- [Method](#method)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -40,10 +41,22 @@ This project focuses on practical, fast, and accurate fashion retrieval without 
 
 ##  Features
 
-- 🎯 **Similarity Search**: Find visually similar clothing items using image embeddings.
+- 🎯 **Similarity Search**: Find visually similar clothing items using text and/or image embeddings.
 - ⚡ **Attribute Filtering**: Filter fashion items based on specific attributes like color, style, material and more.
 - 🤖 **Interactive Conversations**: Engage in multi-turn conversations to refine your fashion search.
 - 🛠️ **Extensible Architecture**: Easily integrate new models and features.
+
+##  Data
+
+Utilized [DeepFashion2 Dataset](https://github.com/switchablenorms/DeepFashion2?tab=readme-ov-file)
+
+##  Method
+
+-  **Image Filtering**: Filtered unique dress image that has "shop" category.
+-  **Image Cropping**: Cropped image according to the bounding box annotations.
+-  **Text Description**: Used QwenVL (2B) to generate description of dress.
+-  **Embeddings**: Used SigLip2 (base) to generate text and image embeddings and saved it as FAISS index.
+-  **Retreival**: Used QwenVL (2B) for multimodal reasoning in chatbot.
 
 ##  Quick Start
 
@@ -212,7 +225,6 @@ We welcome contributions!
 
 ##  Acknowledgments
 
--   🎨 **Design inspiration**: [Dribbble](https://dribbble.com/)
 -   📚 **Libraries used**:
     -   [PyTorch](https://pytorch.org/) - Deep learning framework
     -   [Transformers](https://huggingface.co/transformers/) - NLP library
