@@ -97,7 +97,7 @@ git clone https://github.com/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant.g
 cd Multimodal-Fashion-Assistant
 ```
 
-2.  Create a virtual environment (recommended):
+2.  Create a virtual environment using Anaconda Prompt (recommended):
 
 ```bash
 conda create -n venv python=3.11 anaconda
@@ -112,28 +112,47 @@ ipython kernel install --user --name=kernelname
 pip install -r requirements.txt
 ```
 
-4.  Download necessary model weights (refer to the notebook for specific instructions).
-
 ##  Usage
 
 1.  Open the Jupyter Notebook:
 
 ```bash
-jupyter notebook Multimodal_Fashion_Assistant.ipynb
+conda activate venv
+jupyter notebook
 ```
 
-2.  Follow the instructions within the notebook to load models, process data, and interact with the fashion assistant.
+2. Then find the notebook "multimodal_reasoning.ipynb" and open it.
+
+3.  Follow the instructions within the notebook to load models, process data, and interact with the fashion assistant.
 
 ### Example: Image Similarity Search
 
 ```python
 # Example code (Illustrative - refer to notebook for actual implementation)
-from fashion_assistant import FashionAssistant
+user_query = "Do you have any dress like this?"
 
-assistant = FashionAssistant()
-results = assistant.search_by_image("path/to/image.jpg")
-print(results)
+image_directory = r"../Data/Example"
+image_path = os.path.join(image_directory, "internet_example13.jpg")
+image = Image.open(image_path).convert("RGB")
+
+conversation = []
+output_text = chtbot.generate_description(conversation=conversation, user_query=user_query, user_image=image)
+print(output_text[0])
 ```
+
+### Example Output
+
+The user wants a red and black plaid dress with a Peter Pan collar. The dress has a fit-and-flare silhouette and long sleeves. It is made of a material that appears to be a blend of cotton and polyester. The dress features a button-down front and a waistband with a belt. The notable features of the dress include the Peter Pan collar, the fit-and-flare silhouette.
+
+<p>
+  <img src="assets/output_0_0.jpg" width="180">
+  <img src="assets/output_0_1.jpg" width="180">
+  <img src="assets/output_0_2.jpg" width="180">
+  <img src="assets/output_0_3.jpg" width="180">
+  <img src="assets/output_0_4.jpg" width="180">
+  <img src="assets/output_0_5.jpg" width="180">
+</p>
+
 
 ### Example: Conversational Interaction
 
