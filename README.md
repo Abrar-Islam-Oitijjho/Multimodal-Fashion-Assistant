@@ -58,7 +58,8 @@ Utilized [DeepFashion2 Dataset](https://github.com/switchablenorms/DeepFashion2?
 -  **Image Filtering**: Filtered unique dress image that has "shop" category.
 -  **Image Cropping**: Cropped image according to the bounding box annotations.
 -  **Text Description**: Used QwenVL (2B) to generate descriptions of clothing items.
-- **Embeddings**: Used SigLip2 (base) to generate text and image embeddings and saved them as an FAISS index.
+- **Embeddings**: Used SigLip2 (base) to generate text and image embeddings and saved them in FAISS index.
+- **Meta Data**: Stored all the metadata information of the images along with the embeddings.
 -  **Reasoning**: Used QwenVL (2B) for multimodal reasoning in chatbot.
 -  **Retreival**: Used SigLip2 (base) for retreival.
 
