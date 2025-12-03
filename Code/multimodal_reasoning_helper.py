@@ -18,6 +18,95 @@ class chatbot():
         
         self.retreiving_model = retreiving_model
         self.retreiving_processor = retreiving_processor
+        
+        
+    def classifier(self, user_image):
+    
+        content = [
+            {"type": "text", "text":
+             "Identify the type of content in this image."
+             "If it contains a piece of clothing or fashion item, answer 'clothing'."
+             "If it contains only text, handwriting, or a printed list, answer 'text'."
+             "Answer with exactly one word, no explanation."},
+            {"type": "image"}
+        ]    
+    
+        conversation_followup = [{"role": "user", "content": content}]
+    
+        text_prompt = self.reasoning_processor.apply_chat_template(conversation_followup, add_generation_prompt=True)
+    
+        inputs_kwargs = {"text": text_prompt, "return_tensors": "pt"}
+    
+        if user_image:
+            inputs_kwargs["images"] = user_image
+    
+        inputs = self.reasoning_processor(**inputs_kwargs).to(self.reasoning_model.device)
+    
+        with torch.no_grad():
+            output_ids = self.reasoning_model.generate(**inputs, max_new_tokens=80)
+            
+        generated_ids = [
+            output_ids[len(input_ids):]
+            for input_ids, output_ids in zip(inputs.input_ids, output_ids)
+        ]
+        
+        output_text = self.reasoning_processor.batch_decode(
+            generated_ids,
+            skip_special_tokens=True,
+            clean_up_tokenization_spaces=True
+        )
+        
+        del inputs
+        del output_ids
+        torch.cuda.empty_cache()
+        
+        return output_text
+
+
+    def process_shopping_list(self, user_image):
+
+        content = [
+            {"type": "text", "text":
+             "Read the text. Extract only shopping list items. Return one item per line."},
+            {"type": "image"}
+        ]    
+    
+        conversation_followup = [{"role": "user", "content": content}]
+    
+        text_prompt = self.reasoning_processor.apply_chat_template(conversation_followup, add_generation_prompt=True)
+    
+        inputs_kwargs = {"text": text_prompt, "return_tensors": "pt"}
+    
+        if user_image:
+            inputs_kwargs["images"] = user_image
+    
+        inputs = self.reasoning_processor(**inputs_kwargs).to(self.reasoning_model.device)
+    
+        with torch.no_grad():
+            output_ids = self.reasoning_model.generate(**inputs, max_new_tokens=80)
+            
+        generated_ids = [
+            output_ids[len(input_ids):]
+            for input_ids, output_ids in zip(inputs.input_ids, output_ids)
+        ]
+        
+        output_text = self.reasoning_processor.batch_decode(
+            generated_ids,
+            skip_special_tokens=True,
+            clean_up_tokenization_spaces=True
+        )[0]
+        
+        del inputs
+        del output_ids
+        torch.cuda.empty_cache()
+    
+        items = [
+            line.strip().lstrip("-• ").strip()
+            for line in output_text.split("\n")
+            if line.strip()
+        ]
+        
+        return items
     
     def generate_description(self, conversation, user_query, user_image):
     
@@ -146,3 +235,34 @@ class chatbot():
         plt.show()
     
         return top_k_keys, suggested_images
+    
+    
+    def comapct_chatbot(self, conversation, faiss_index_directory, master_df, user_query, user_image, top_k, alpha):
+
+        output_text = self.generate_description(conversation=conversation, user_query=user_query, user_image=user_image)
+        print(output_text[0])
+        
+        dist_img, idx_img, dist_text, idx_text = self.retreive_index(faiss_index_directory, output_text, user_query=user_query, 
+                                                                       user_image=user_image, top_k=top_k[0])
+        
+        combined_scores = self.calculate_combined_score(idx_img, dist_img, idx_text, dist_text, alpha)
+        #print(combined_scores)
+        
+        top_k_keys, suggested_images = self.retreive_top_products(combined_scores, master_df, top_k=top_k[1])
+        
+        conversation.append({
+            "role": "user",
+            "content": [{"type": "text", "text": user_query}]
+        })
+        conversation.append({
+            "role": "assistant",
+            "content": [{"type": "text", "text": output_text[0]}]
+        })
+    
+        result = {}
+        result['conversation'] = conversation
+        result['output_text'] = output_text
+        result['top_k_keys'] = top_k_keys
+        result['suggested_images'] = suggested_images
+        
+        return result
