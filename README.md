@@ -19,10 +19,13 @@ An AI-powered fashion assistant that retrieves and reasons over images and text 
 
 - [About](#about)
 - [Features](#features)
+- [Data](#data)
 - [Method](#method)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Example: Image Similarity Search](#example-image-similarity-search)
+- [Example: Retrieve Products from Handwritten List](#example-retrieve-products-from-handwritten-list)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [Support](#support)
@@ -30,16 +33,19 @@ An AI-powered fashion assistant that retrieves and reasons over images and text 
 
 ## About
 
-The Multimodal Fashion Assistant is a retrieval and reasoning system built on two models: SigLIP2-base for image and text embeddings, and Qwen-VL (2B) for multimodal reasoning. The system processes images and text to generate meaningful representations, runs similarity search, and handles attribute-based queries. It can operate in multimodal mode or as a single-mode (image-only or text-only) retrieval tool.
+The Multimodal Fashion Assistant is a retrieval and reasoning system built on two models: SigLIP2-base for embeddings and Qwen-VL (2B) for multimodal understanding. SigLIP2 generates image and text embeddings for similarity search, and Qwen-VL interprets the user query, extracts product attributes, and handles reasoning tasks.
 
-The pipeline uses SigLIP2 to extract high-quality embeddings from user input, while Qwen-VL interprets queries, extracts product attributes, and resolves complex fashion-related questions. Users can upload an image, describe a product, or refine their request through follow-up prompts. The system then returns the closest matching items based on visual and semantic similarity.
+The system supports image search, text search, and combined multimodal search. Users can upload a product photo, describe an item, or refine the request through follow-up prompts. The backend then returns the closest matching products based on visual and semantic similarity.
 
-This project focuses on practical, fast, and accurate fashion retrieval without requiring a dedicated front end. It acts as a flexible backend module that supports image search, text search, and multimodal reasoning for fashion data.
+In addition to fashion retrieval, the system can read text from images. It can extract items from a photographed shopping list by interpreting the text directly from the image, which allows it to act like an OCR-style component without using a separate OCR engine.
+
+This project is built as a practical and fast backend module. It requires no dedicated front end and focuses on accurate search, flexible input handling, and efficient reasoning over fashion data.
 
 ##  Features
 
 - 🎯 **Similarity Search**: Find visually similar clothing items using text and/or image embeddings.
 - ⚡ **Attribute Filtering**: Filter fashion items based on specific attributes like color, style, material and more.
+- 📝 **OCR Item Extractor**: Extracts item names from a photographed shopping list (performs OCR-like text reading). 
 - 🤖 **Interactive Conversations**: Engage in multi-turn conversations to refine your fashion search.
 - 🛠️ **Extensible Architecture**: Easily integrate new models and features.
 
@@ -51,9 +57,10 @@ Utilized [DeepFashion2 Dataset](https://github.com/switchablenorms/DeepFashion2?
 
 -  **Image Filtering**: Filtered unique dress image that has "shop" category.
 -  **Image Cropping**: Cropped image according to the bounding box annotations.
--  **Text Description**: Used QwenVL (2B) to generate description of dress.
--  **Embeddings**: Used SigLip2 (base) to generate text and image embeddings and saved it as FAISS index.
--  **Retreival**: Used QwenVL (2B) for multimodal reasoning in chatbot.
+-  **Text Description**: Used QwenVL (2B) to generate descriptions of clothing items.
+- **Embeddings**: Used SigLip2 (base) to generate text and image embeddings and saved them as an FAISS index.
+-  **Reasoning**: Used QwenVL (2B) for multimodal reasoning in chatbot.
+-  **Retreival**: Used SigLip2 (base) for retreival.
 
 ##  Quick Start
 
@@ -114,10 +121,10 @@ jupyter notebook
 
 3.  Follow the instructions within the notebook to load models, process data, and interact with the fashion assistant.
 
-### Example: Image Similarity Search
+## Example: Image Similarity Search
 
 ```python
-# Example code (Illustrative - refer to notebook for actual implementation)
+# Example code
 user_query = "Do you have any dress like this?"
 
 image_directory = r"../Data/Example"
@@ -183,6 +190,42 @@ The material should be a blend of cotton and polyester. The notable features of 
   <img src="assets/output_2_0.jpg" width="180">
 </p>
 
+## Example: Retrieve Products from Handwritten List
+
+### Example Input
+
+<img src="assets/shopping_list_items/hand_written_list_low_res.jpg" width="180">
+
+### Example Output
+
+```
+The items in the list: ['Full length skirt', 'White formal shirt', 'Black formal pants', 'Comfy trousers']
+```
+
+### Retrieved Images: Full length skirt (Top 2)
+<p>
+  <img src="assets/shopping_list_items/output_shp_lst_0_1.jpg" width="180">
+  <img src="assets/shopping_list_items/output_shp_lst_0_2.jpg" width="180">
+</p>
+
+### Retrieved Images: White formal shirt (Top 2)
+<p>
+  <img src="assets/shopping_list_items/output_shp_lst_1_2.jpg" width="180">
+  <img src="assets/shopping_list_items/output_shp_lst_1_0.jpg" width="180">
+</p>
+
+### Retrieved Images: Black formal pants (Top 2)
+<p>
+  <img src="assets/shopping_list_items/output_shp_lst_2_3.jpg" width="180">
+  <img src="assets/shopping_list_items/output_shp_lst_2_4.jpg" width="180">
+</p>
+
+### Retrieved Images: Comfy trousers (Top 2)
+<p>
+  <img src="assets/shopping_list_items/output_shp_lst_3_1.jpg" width="180">
+  <img src="assets/shopping_list_items/output_shp_lst_3_3.jpg" width="180">
+</p>
+
 ##  Project Structure
 
 ```
@@ -207,7 +250,7 @@ Multimodal-Fashion-Assistant/
 
 ##  Contributing
 
-We welcome contributions!
+Contributions are welcomed!
 
 ### Quick Contribution Steps
 
@@ -224,7 +267,7 @@ We welcome contributions!
 
 ##  Acknowledgments
 
--   📚 **Libraries used**:
+-   📚 **Libraries/Tools used**:
     -   [PyTorch](https://pytorch.org/) - Deep learning framework
     -   [Transformers](https://huggingface.co/transformers/) - NLP library
     -   [Anaconda](https://anaconda.org/) – Python distribution with environment and package management
