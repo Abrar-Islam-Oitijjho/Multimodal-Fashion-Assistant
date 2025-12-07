@@ -195,7 +195,7 @@ The material should be a blend of cotton and polyester. The notable features of 
 
 ### Example Input
 
-<img src="assets/shopping_list_items/hand_written_list_low_res.jpg" width="180">
+<img src="assets/shopping_list_items/hand_written_list_low_res.jpg" width="360">
 
 ### Example Output
 
