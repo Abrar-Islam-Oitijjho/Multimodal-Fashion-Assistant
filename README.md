@@ -38,8 +38,6 @@ The Multimodal Fashion Assistant is a retrieval and reasoning system for fashion
 
 The first version of this project was notebook-heavy. The updated version moves the main logic into reusable Python modules, adds a configuration layer, loads models and indexes through services, and runs the retrieval pipeline through a LangGraph workflow. The system can now also be served through FastAPI REST endpoints for online application deployment.
 
-The current stable implementation is frozen at **Step 7**. Step 8 is intentionally not included in this version.
-
 ## What Changed in the Updated Version
 
 The updated repo focuses on turning the original fashion retrieval notebook into a cleaner agentic backend.
