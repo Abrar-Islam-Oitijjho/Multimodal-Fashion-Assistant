@@ -605,12 +605,6 @@ Planned future improvements:
 - Add tests for API endpoints and graph nodes.
 - Add better environment variable support for model paths and deployment settings.
 
-## Resume/GitHub Summary
-
-This project can be summarized as:
-
-> Developed a LangGraph-based multimodal fashion retrieval agent using SigLIP2 embeddings, FAISS similarity search, and reasoning-based query interpretation for text, image, and image-text product retrieval. Improved the pipeline with dynamic retrieval routing, structured product-intent extraction, separate image/text retrieval paths, category-aware filtering, reranking, self-checking, and FastAPI REST endpoints for online deployment.
-
 ## Contributing
 
 Contributions are welcome.
