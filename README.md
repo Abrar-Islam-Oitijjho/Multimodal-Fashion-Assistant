@@ -38,8 +38,6 @@ The Multimodal Fashion Assistant is a retrieval and reasoning system for fashion
 
 The first version of this project was notebook-heavy. The updated version moves the main logic into reusable Python modules, adds a configuration layer, loads models and indexes through services, and runs the retrieval pipeline through a LangGraph workflow. The system can now also be served through FastAPI REST endpoints for online application deployment.
 
-The current stable implementation is frozen at **Step 7**. Step 8 is intentionally not included in this version.
-
 ## What Changed in the Updated Version
 
 The updated repo focuses on turning the original fashion retrieval notebook into a cleaner agentic backend.
@@ -128,39 +126,9 @@ The updated pipeline follows these main steps:
 
 The current stable LangGraph file is:
 
-```text
-app/graph_workflow_step7.py
-```
-
-The workflow is:
-
-```text
-START
-  ↓
-analyze_user_intent
-  ↓
-decide_retrieval_strategy
-  ↓
-generate_search_description
-  ↓
-extract_structured_query
-  ↓
-retrieve_image_candidates
-  ↓
-retrieve_text_candidates
-  ↓
-merge_candidates
-  ↓
-filter_candidates
-  ↓
-rerank_candidates
-  ↓
-evaluate_result_quality
-  ├── poor result: rewrite_query_and_retry → retrieve again once
-  └── good result: update_conversation
-  ↓
-END
-```
+<p align="center">
+  <img src="assets/fashion_graph_step7_horizontal.png" alt="Step 7 LangGraph workflow for the Multimodal Fashion Assistant" width="100%">
+</p>
 
 ### Step 1: Intent detection and strategy routing
 
@@ -604,12 +572,6 @@ Planned future improvements:
 - Add a simple frontend for image upload and visual result display.
 - Add tests for API endpoints and graph nodes.
 - Add better environment variable support for model paths and deployment settings.
-
-## Resume/GitHub Summary
-
-This project can be summarized as:
-
-> Developed a LangGraph-based multimodal fashion retrieval agent using SigLIP2 embeddings, FAISS similarity search, and reasoning-based query interpretation for text, image, and image-text product retrieval. Improved the pipeline with dynamic retrieval routing, structured product-intent extraction, separate image/text retrieval paths, category-aware filtering, reranking, self-checking, and FastAPI REST endpoints for online deployment.
 
 ## Contributing
 
