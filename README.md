@@ -126,39 +126,9 @@ The updated pipeline follows these main steps:
 
 The current stable LangGraph file is:
 
-```text
-app/graph_workflow_step7.py
-```
-
-The workflow is:
-
-```text
-START
-  ↓
-analyze_user_intent
-  ↓
-decide_retrieval_strategy
-  ↓
-generate_search_description
-  ↓
-extract_structured_query
-  ↓
-retrieve_image_candidates
-  ↓
-retrieve_text_candidates
-  ↓
-merge_candidates
-  ↓
-filter_candidates
-  ↓
-rerank_candidates
-  ↓
-evaluate_result_quality
-  ├── poor result: rewrite_query_and_retry → retrieve again once
-  └── good result: update_conversation
-  ↓
-END
-```
+<p align="center">
+  <img src="assets/fashion_graph_step7_horizontal.png" alt="Step 7 LangGraph workflow for the Multimodal Fashion Assistant" width="100%">
+</p>
 
 ### Step 1: Intent detection and strategy routing
 
