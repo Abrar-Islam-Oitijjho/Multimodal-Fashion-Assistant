@@ -1,275 +1,636 @@
-# 🤖 Multimodal Fashion Assistant
+# Multimodal Fashion Assistant
 
-An AI-powered fashion assistant that retrieves and reasons over images and text to deliver precise and relevant fashion recommendations using VLM models.
+An agentic multimodal fashion retrieval and reasoning system that searches fashion products using text, image, or combined image-text input. The updated version converts the earlier notebook-based project into a modular Python codebase with LangGraph workflow orchestration and FastAPI REST endpoints.
 
 ##
-
-![GitHub stars](https://img.shields.io/github/stars/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant?style=social)
-![GitHub forks](https://img.shields.io/github/forks/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant?style=social)
-![GitHub issues](https://img.shields.io/github/issues/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant)
-![GitHub last commit](https://img.shields.io/github/last-commit/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant)
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)
 ![Transformers](https://img.shields.io/badge/Transformers-%23FF5800.svg?style=for-the-badge&logo=Transformers&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-1C3C3C?style=for-the-badge)
+![FAISS](https://img.shields.io/badge/FAISS-0467DF?style=for-the-badge)
 
 ## 📋 Table of Contents
 
 - [About](#about)
+- [What Changed in the Updated Version](#what-changed-in-the-updated-version)
 - [Features](#features)
 - [Data](#data)
 - [Method](#method)
+- [Agent Workflow](#agent-workflow)
+- [FastAPI Endpoints](#fastapi-endpoints)
 - [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Example: Image Similarity Search](#example-image-similarity-search)
-- [Example: Retrieve Products from Handwritten List](#example-retrieve-products-from-handwritten-list)
+- [Example: FastAPI Image Search](#example-fastapi-image-search)
 - [Project Structure](#project-structure)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [Support](#support)
 - [Acknowledgments](#acknowledgments)
 
 ## About
 
-The Multimodal Fashion Assistant is a retrieval and reasoning system built on two models: SigLIP2-base for embeddings and Qwen-VL (2B) for multimodal understanding. SigLIP2 generates image and text embeddings for similarity search, and Qwen-VL interprets the user query, extracts product attributes, and handles reasoning tasks.
+The Multimodal Fashion Assistant is a retrieval and reasoning system for fashion product search. It uses SigLIP2-base embeddings for image and text similarity search, FAISS for fast nearest-neighbor retrieval, and a reasoning layer to interpret user intent and generate a better search description.
 
-The system supports image search, text search, and combined multimodal search. Users can upload a product photo, describe an item, or refine the request through follow-up prompts. The backend then returns the closest matching products based on visual and semantic similarity.
+The first version of this project was notebook-heavy. The updated version moves the main logic into reusable Python modules, adds a configuration layer, loads models and indexes through services, and runs the retrieval pipeline through a LangGraph workflow. The system can now also be served through FastAPI REST endpoints for online application deployment.
 
-In addition to fashion retrieval, the system can read text from images. It can extract items from a photographed shopping list by interpreting the text directly from the image, which allows it to act like an OCR-style component without using a separate OCR engine.
+The current stable implementation is frozen at **Step 7**. Step 8 is intentionally not included in this version.
 
-This project is built as a practical and fast backend module. It requires no dedicated front end and focuses on accurate search, flexible input handling, and efficient reasoning over fashion data.
+## What Changed in the Updated Version
 
-##  Features
+The updated repo focuses on turning the original fashion retrieval notebook into a cleaner agentic backend.
 
-- 🎯 **Similarity Search**: Find visually similar clothing items using text and/or image embeddings.
-- ⚡ **Attribute Filtering**: Filter fashion items based on specific attributes like color, style, material and more.
-- 📝 **OCR Item Extractor**: Extracts item names from a photographed shopping list (performs OCR-like text reading). 
-- 🤖 **Interactive Conversations**: Engage in multi-turn conversations to refine your fashion search.
-- 🛠️ **Extensible Architecture**: Easily integrate new models and features.
+### Main improvements
 
-##  Data
+- Cleaned and modularized notebook logic into Python files under `app/`.
+- Added centralized path and model settings in `app/config.py`.
+- Added reusable loading services for metadata, FAISS indexes, embeddings, and reasoning components.
+- Added LangGraph workflow orchestration instead of running every step manually in a notebook.
+- Added intent detection to identify text-only, image-only, and image-text searches.
+- Added dynamic retrieval strategy selection for text-only, image-only, image-priority multimodal, and balanced multimodal search.
+- Added structured product query extraction for category, color, pattern, collar, sleeve, material, fit, style, and constraints.
+- Added separate image and text retrieval paths, then merged candidates by product identity.
+- Added category and attribute-aware soft filtering.
+- Added reranking over a larger candidate pool before selecting final results.
+- Added a quality self-check node with one retry path when the first retrieval result is weak.
+- Added FastAPI endpoints for text search and image/image-text search.
+- Added image URL support in API responses so retrieved product images can be viewed directly in the browser.
 
-Utilized [DeepFashion2 Dataset](https://github.com/switchablenorms/DeepFashion2?tab=readme-ov-file)
+## Features
 
-##  Method
+- 🎯 **Text Search**: Retrieve fashion products from natural language queries.
+- 🖼️ **Image Search**: Retrieve visually similar clothing items from an uploaded image.
+- 🔀 **Multimodal Search**: Combine image and text input for better matching.
+- 🧠 **Intent-Aware Routing**: Decide whether the user is doing text-only, image-only, image-priority, or full multimodal search.
+- 🧾 **Structured Query Extraction**: Extract product type, colors, pattern, collar, sleeve, material, fit, style, and constraints.
+- ⚖️ **Dynamic Alpha Selection**: Control the balance between image and text retrieval scores.
+- 🔍 **Separate Retrieval Paths**: Run image retrieval and text retrieval independently before merging results.
+- 🧹 **Soft Attribute Filtering**: Down-rank weak matches without removing all candidates too aggressively.
+- 📊 **Reranking**: Reorder the top candidate pool using product metadata and match quality.
+- ✅ **Self-Check and Retry**: Evaluate result quality and retry once with a broader query when needed.
+- 🚀 **FastAPI Deployment Layer**: Serve the Step 7 workflow through REST endpoints.
 
--  **Image Filtering**: Filtered unique dress image that has "shop" category.
--  **Image Cropping**: Cropped image according to the bounding box annotations.
--  **Text Description**: Used QwenVL (2B) to generate descriptions of clothing items.
-- **Embeddings**: Used SigLip2 (base) to generate text and image embeddings and saved them in FAISS index.
-- **Meta Data**: Stored all the metadata information of the images along with the embeddings.
--  **Reasoning**: Used QwenVL (2B) for multimodal reasoning in chatbot.
--  **Retreival**: Used SigLip2 (base) for retreival.
+## Data
 
-##  Quick Start
+This project uses a processed subset of the [DeepFashion2 Dataset](https://github.com/switchablenorms/DeepFashion2?tab=readme-ov-file).
 
-Clone and run the Jupyter Notebook:
+The expected data layout is:
+
+```text
+Data/
+├── annos/                         # Annotation JSON files
+├── train/
+│   └── image/                     # Product images used by FastAPI static image serving
+├── cropped_image_unique/          # Cropped unique product images
+├── master_csv.csv                 # Product metadata
+├── new_master_csv.csv             # Processed metadata with descriptions
+├── faiss_image_siglip2_base.index # FAISS image index
+└── faiss_text_siglip2_base.index  # FAISS text index
+```
+
+Product image names can follow the format used in the dataset, such as:
+
+```text
+000002_item1.jpg
+000002_item2.jpg
+000123_item1.jpg
+```
+
+The FastAPI image URL is created from the image filename. For example:
+
+```text
+http://127.0.0.1:8000/images/000002_item2.jpg
+```
+
+## Method
+
+The updated pipeline follows these main steps:
+
+1. **Preprocessing**: Read DeepFashion2 annotations and prepare product metadata.
+2. **Image Cropping**: Crop clothing items using annotation bounding boxes.
+3. **Description Generation**: Generate or store product-level fashion descriptions.
+4. **Embedding Generation**: Use SigLIP2-base to generate image and text embeddings.
+5. **FAISS Indexing**: Store image and text embeddings in separate FAISS indexes.
+6. **Intent Analysis**: Detect whether the input is text-only, image-only, or image-text.
+7. **Structured Query Extraction**: Extract fashion attributes from the query or generated search description.
+8. **Dynamic Retrieval**: Choose image, text, image-priority, or multimodal retrieval.
+9. **Candidate Merge**: Merge image and text candidates by `image_id + item_id`, not raw FAISS index alone.
+10. **Soft Filtering**: Reward matching category and attributes while penalizing clear mismatches.
+11. **Reranking**: Rerank the top 20 to 50 candidates before returning the final products.
+12. **Quality Check and Retry**: Check match quality and retry once if results are poor.
+13. **API Response**: Return products, scores, metadata, image paths, and image URLs through FastAPI.
+
+## Agent Workflow
+
+The current stable LangGraph file is:
+
+```text
+app/graph_workflow_step7.py
+```
+
+The workflow is:
+
+```text
+START
+  ↓
+analyze_user_intent
+  ↓
+decide_retrieval_strategy
+  ↓
+generate_search_description
+  ↓
+extract_structured_query
+  ↓
+retrieve_image_candidates
+  ↓
+retrieve_text_candidates
+  ↓
+merge_candidates
+  ↓
+filter_candidates
+  ↓
+rerank_candidates
+  ↓
+evaluate_result_quality
+  ├── poor result: rewrite_query_and_retry → retrieve again once
+  └── good result: update_conversation
+  ↓
+END
+```
+
+### Step 1: Intent detection and strategy routing
+
+The graph first checks whether the user provided text, an image, or both. It then classifies the request as a normal product search, a similar-product search, a refinement request, or missing input.
+
+### Step 2: Dynamic retrieval strategy
+
+The graph chooses one of these retrieval modes:
+
+```text
+text_only
+image_only
+image_priority_multimodal
+multimodal
+none
+```
+
+The selected mode controls the `alpha` value used during score merging:
+
+```text
+alpha near 1.0 = stronger image retrieval weight
+alpha near 0.0 = stronger text retrieval weight
+```
+
+### Step 3: Structured query extraction
+
+The workflow extracts a structured query like:
+
+```json
+{
+  "product_type": "dress",
+  "colors": ["black", "red"],
+  "pattern": "plaid",
+  "collar": "peter pan collar",
+  "sleeve": "long sleeve",
+  "material": null,
+  "fit": null,
+  "style": null,
+  "constraints": []
+}
+```
+
+This makes filtering, reranking, debugging, and API output easier.
+
+### Step 4: Separate image and text retrieval
+
+Image and text retrieval run as separate paths. The results are merged using product identity:
+
+```text
+product_key = image_id + item_id
+```
+
+This is safer than relying only on raw FAISS row indices.
+
+### Step 5: Category and attribute filtering
+
+The system uses soft filtering. It does not blindly delete candidates. Instead, it adds rewards for matching product type, color, pattern, collar, sleeve, material, fit, and style. It applies penalties for clear mismatches or violated constraints.
+
+### Step 6: Reranking
+
+The system retrieves a larger pool first, usually 20 to 50 candidates, then reranks the candidates before selecting the final top products. This helps correct cases where FAISS retrieves semantically close but visually or categorically weak matches.
+
+### Step 7: Self-check and one retry
+
+The graph checks the final product list using:
+
+- returned product count
+- category match rate
+- attribute coverage
+- image and text path support
+- constraint violations
+
+If the result quality is poor, the graph rewrites the query more broadly and retries once. This prevents endless loops while making the pipeline more robust.
+
+## FastAPI Endpoints
+
+The API exposes the Step 7 workflow through REST endpoints.
+
+### Health check
+
+```text
+GET /health
+```
+
+Example response:
+
+```json
+{
+  "status": "ok",
+  "message": "Step 7 Fashion Assistant API is running."
+}
+```
+
+### Text-only search
+
+```text
+POST /search
+```
+
+Example request body:
+
+```json
+{
+  "user_query": "black and red plaid dress with Peter Pan collar",
+  "retrieval_top_k": 30,
+  "display_top_k": 6,
+  "rerank_top_k": 50,
+  "debug": true
+}
+```
+
+### Image or image-text search
+
+```text
+POST /search/image
+```
+
+Use `form-data`:
+
+```text
+user_query: find something similar
+image: <uploaded image file>
+retrieval_top_k: 30
+display_top_k: 6
+rerank_top_k: 50
+debug: true
+```
+
+### API response fields
+
+The API returns:
+
+```text
+input_type
+user_intent
+retrieval_strategy
+alpha
+search_description
+structured_query
+quality_check
+retry_count
+retry_reason
+mode
+products
+conversation
+debug_trace, only when debug=true
+```
+
+Each product can include:
+
+```text
+product_key
+image_id
+item_id
+category_name
+description
+attributes
+image_path
+image_url
+image_score
+text_score
+combined_score
+filtered_score
+rerank_score
+attribute_matches
+attribute_misses
+rerank_reasons
+```
+
+## Quick Start
+
+Clone the repository and create a Python environment:
 
 ```bash
 git clone https://github.com/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant.git
 cd Multimodal-Fashion-Assistant
-jupyter notebook Multimodal_Fashion_Assistant.ipynb
+conda create -n fashion-agent python=3.11 -y
+conda activate fashion-agent
+pip install -r requirements.txt
 ```
 
-Open the notebook in your browser and follow the instructions.
+Run the FastAPI server:
 
-##  Installation
+```bash
+python run_api.py
+```
+
+or:
+
+```bash
+uvicorn app.api.main:app --reload
+```
+
+Open the API docs:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Check whether the server is running:
+
+```text
+http://127.0.0.1:8000/health
+```
+
+View a product image directly:
+
+```text
+http://127.0.0.1:8000/images/000002_item2.jpg
+```
+
+## Installation
 
 ### Prerequisites
 
 - Python 3.11+
-- Jupyter Notebook 7.4.5
-- PyTorch 2.9.1+cu126
-- Transformers 5.0.0.dev0
-- Other dependencies listed in `requirements.txt`
+- Anaconda or Miniconda, recommended
+- PyTorch
+- Transformers
+- FAISS
+- Pandas
+- Pillow
+- LangGraph
+- FastAPI
+- Uvicorn
 
-### Steps
-
-1.  Clone the repository:
-
-```bash
-git clone https://github.com/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant.git
-cd Multimodal-Fashion-Assistant
-```
-
-2.  Create a virtual environment using Anaconda Prompt (recommended):
+### Environment setup
 
 ```bash
-conda create -n venv python=3.11 anaconda
-conda activate venv
-conda install ipykernel
-ipython kernel install --user --name=kernelname
-```
-
-3.  Install dependencies:
-
-```bash
+conda create -n fashion-agent python=3.11 -y
+conda activate fashion-agent
 pip install -r requirements.txt
 ```
 
-##  Usage
+The API requirements are also available separately in:
 
-1.  Open the Jupyter Notebook:
-
-```bash
-conda activate venv
-jupyter notebook
+```text
+requirements_api.txt
 ```
 
-2. Then find the notebook "multimodal_reasoning.ipynb" and open it.
+Depending on your local machine, you may need to install PyTorch and FAISS separately using the correct CPU or CUDA command for your system.
 
-3.  Follow the instructions within the notebook to load models, process data, and interact with the fashion assistant.
+## Usage
+
+### Option 1: Run through FastAPI
+
+```bash
+python run_api.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Use `/search` for text-only input and `/search/image` for image or image-text input.
+
+### Option 2: Run through notebook
+
+Open the notebook folder:
+
+```bash
+jupyter notebook notebooks/
+```
+
+Recommended notebooks:
+
+```text
+notebooks/01_test_modular_chatbot.ipynb
+notebooks/02_test_langgraph_workflow.ipynb
+```
+
+### Option 3: Import the graph in Python
+
+```python
+from PIL import Image
+from app.graph_workflow_step7 import fashion_graph
+
+image = Image.open("Data/Example/internet_example13.jpg").convert("RGB")
+
+result = fashion_graph.invoke(
+    {
+        "user_query": "find something similar",
+        "user_image": image,
+        "retrieval_top_k": 30,
+        "display_top_k": 6,
+        "rerank_top_k": 50,
+        "retry_count": 0,
+    }
+)
+
+print(result["retrieval_strategy"])
+print(result["structured_query"])
+print(result["quality_check"])
+print(result["products"][:2])
+```
 
 ## Example: Image Similarity Search
 
 ```python
-# Example code
-user_query = "Do you have any dress like this?"
+from PIL import Image
+from app.graph_workflow_step7 import fashion_graph
 
-image_directory = r"../Data/Example"
-image_path = os.path.join(image_directory, "internet_example13.jpg")
-image = Image.open(image_path).convert("RGB")
+user_query = "Do you have any dress like this?"
+image = Image.open("assets/internet_example13.jpg").convert("RGB")
+
+result = fashion_graph.invoke(
+    {
+        "user_query": user_query,
+        "user_image": image,
+        "retrieval_top_k": 30,
+        "display_top_k": 6,
+        "rerank_top_k": 50,
+        "retry_count": 0,
+    }
+)
 ```
-### Example Input
+
+### Example input
 
 <img src="assets/internet_example13.jpg" width="180">
 
-### Example Output
+### Example output fields
 
-```
-The user wants a red and black plaid dress with a Peter Pan collar. The dress has a fit-and-flare silhouette and long sleeves.
-It is made of a material that appears to be a blend of cotton and polyester. The dress features a button-down front and a waistband with a belt.
-The notable features of the dress include the Peter Pan collar, the fit-and-flare silhouette.
+```text
+retrieval_strategy: image_priority_multimodal
+alpha: 0.9
+input_type: text_and_image
+user_intent: find_similar
 ```
 
-### Retrieved Images (Top 2)
+### Retrieved images
+
 <p>
   <img src="assets/output_0_4.jpg" width="180">
   <img src="assets/output_0_0.jpg" width="180">
 </p>
 
+## Example: FastAPI Image Search
 
-### Example: Follow-up Conversation
+Start the API:
+
+```bash
+python run_api.py
+```
+
+Send an image-text request from Python:
 
 ```python
-user_query = "Do you have the dress in blue color?"
+import requests
+
+url = "http://127.0.0.1:8000/search/image"
+
+with open("Data/Example/internet_example13.jpg", "rb") as image_file:
+    response = requests.post(
+        url,
+        data={
+            "user_query": "find something similar",
+            "retrieval_top_k": 30,
+            "display_top_k": 6,
+            "rerank_top_k": 50,
+            "debug": "true",
+        },
+        files={"image": image_file},
+    )
+
+print(response.json())
 ```
 
-### Example Output
+Example product image URL from the response:
 
-```
-The user wants a blue dress with a Peter Pan collar, a fit-and-flare silhouette, long sleeves, and a waistband with a belt.
-The dress is made of a material that appears to be a blend of cotton and polyester.
-The notable features of the dress include the Peter Pan collar, the fit-and-flare silhouette, and the waistband with a belt.
+```text
+/images/000002_item2.jpg
 ```
 
-### Retrieved Images (Top 2)
-<p>
-  <img src="assets/output_1_4.jpg" width="180">
-  <img src="assets/output_1_3.jpg" width="180">
-</p>
+Open it in the browser using:
 
-### Example: Second Follow-up Conversation
-
-```python
-user_query = "Do you have any t-shirt that matches with this blue dress?"
+```text
+http://127.0.0.1:8000/images/000002_item2.jpg
 ```
 
-### Example Output
+## Project Structure
 
-```
-The user wants a blue t-shirt that matches the blue dress they mentioned earlier.
-The t-shirt should have a Peter Pan collar, a fit-and-flare silhouette, long sleeves, and a waistband with a belt.
-The material should be a blend of cotton and polyester. The notable features of the t-shirt include the Peter Pan collar, the fit-and-flare silhouette, and the waistband with
-```
-
-### Retrieved Images (Top 2)
-<p>
-  <img src="assets/output_2_1.jpg" width="180">
-  <img src="assets/output_2_0.jpg" width="180">
-</p>
-
-## Example: Retrieve Products from Handwritten List
-
-### Example Input
-
-<img src="assets/shopping_list_items/hand_written_list_low_res.jpg" width="360">
-
-### Example Output
-
-```
-The items in the list: ['Full length skirt', 'White formal shirt', 'Black formal pants', 'Comfy trousers']
-```
-
-### Retrieved Images: Full length skirt (Top 2)
-<p>
-  <img src="assets/shopping_list_items/output_shp_lst_0_1.jpg" width="180">
-  <img src="assets/shopping_list_items/output_shp_lst_0_2.jpg" width="180">
-</p>
-
-### Retrieved Images: White formal shirt (Top 2)
-<p>
-  <img src="assets/shopping_list_items/output_shp_lst_1_2.jpg" width="180">
-  <img src="assets/shopping_list_items/output_shp_lst_1_0.jpg" width="180">
-</p>
-
-### Retrieved Images: Black formal pants (Top 2)
-<p>
-  <img src="assets/shopping_list_items/output_shp_lst_2_3.jpg" width="180">
-  <img src="assets/shopping_list_items/output_shp_lst_2_4.jpg" width="180">
-</p>
-
-### Retrieved Images: Comfy trousers (Top 2)
-<p>
-  <img src="assets/shopping_list_items/output_shp_lst_3_1.jpg" width="180">
-  <img src="assets/shopping_list_items/output_shp_lst_3_3.jpg" width="180">
-</p>
-
-##  Project Structure
-
-```
+```text
 Multimodal-Fashion-Assistant/
-├── 📁 Data/                                 # Fashion dataset and image files
-├── 📁 CSVs/                                 # Generated metadata saved in csv format
-├── 📁 assets/                               # assets to the project
-├── 📁 Code/                                 # Source code for the fashion assistant
-│   ├── 📄 data_preprocessing.ipynb          # For preprocessing the data
-│   ├── 📄 data_preprocessing_helper.py      # Utility functions for data-preprocessing
-│   └── 📄 description_generator.ipynb       # Generate descriptions for each image
-    └── 📄 description_generator.ipynb       # Generate descriptions for each image
-    └── 📄 description_generator_helper.py   # Utility functions for descriptions generator
-    └── 📄 embedding_generator.ipynb         # Generates text and image embedding for each image
-    └── 📄 embeddings_generator_helper.py    # Utility functions for embedding generator
-    └── 📄 multimodal_reasoning.ipynb        # Multimodal chatbot
-    └── 📄 multimodal_reasoning_helper.py    # Utility functions for multimodal chatbot
-
-├── 📄 requirements.txt        # Project dependencies
-├── 📄 README.md               # Project documentation
+├── Data/
+│   ├── Example/                         # Example input images
+│   ├── annos/                           # DeepFashion2 annotation files
+│   ├── train/image/                     # Product images served by FastAPI
+│   ├── cropped_image_unique/            # Cropped fashion item images
+│   ├── master_csv.csv                   # Main metadata file
+│   ├── new_master_csv.csv               # Processed metadata file
+│   ├── faiss_image_siglip2_base.index   # Image FAISS index
+│   └── faiss_text_siglip2_base.index    # Text FAISS index
+│
+├── app/
+│   ├── api/
+│   │   ├── main.py                      # FastAPI app setup
+│   │   ├── routes.py                    # API route logic
+│   │   └── schemas.py                   # Pydantic request and response schemas
+│   ├── config.py                        # Central project paths and model settings
+│   ├── services.py                      # Lazy-loaded reusable services
+│   ├── model_loader.py                  # Model loading utilities
+│   ├── embeddings.py                    # SigLIP2 embedding generation
+│   ├── retrieval.py                     # FAISS retrieval logic
+│   ├── reasoning.py                     # Reasoning/search-description logic
+│   ├── chatbot.py                       # Chatbot wrapper
+│   ├── graph_workflow_basic.py          # Basic LangGraph workflow
+│   ├── graph_workflow_step1.py          # Intent and strategy step
+│   ├── graph_workflow_step2.py          # Dynamic alpha step
+│   ├── graph_workflow_step3.py          # Structured query extraction
+│   ├── graph_workflow_step4.py          # Separate image/text retrieval paths
+│   ├── graph_workflow_step5.py          # Category and attribute filtering
+│   ├── graph_workflow_step6.py          # Reranking
+│   └── graph_workflow_step7.py          # Stable workflow with self-check and retry
+│
+├── notebooks/
+│   ├── 01_test_modular_chatbot.ipynb
+│   └── 02_test_langgraph_workflow.ipynb
+│
+├── assets/                              # README example images
+├── docs/
+│   └── FASTAPI_STEP7.md                 # Short FastAPI-specific guide
+├── requirements.txt                     # Main dependency file
+├── requirements_api.txt                 # API dependency file
+├── run_api.py                           # FastAPI server runner
+└── README.md                            # Project documentation
 ```
 
-##  Contributing
+## Roadmap
 
-Contributions are welcomed!
+The current version stops at Step 7.
 
-### Quick Contribution Steps
+Planned future improvements:
 
-1.  🍴 Fork the repository
-2.  🌟 Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3.  ✅ Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4.  📤 Push to the branch (`git push origin feature/AmazingFeature`)
-5.  🔃 Open a Pull Request
+- Add product-level explanation generation.
+- Add stronger conversation-aware refinement.
+- Replace the deterministic reranker with an LLM/VLM reranker if latency allows.
+- Add Docker for deployment.
+- Add a simple frontend for image upload and visual result display.
+- Add tests for API endpoints and graph nodes.
+- Add better environment variable support for model paths and deployment settings.
 
-##  Support
+## Resume/GitHub Summary
 
--   📧 **Email**: abraroitijjho35@gmail.com
--   🐛 **Issues**: [GitHub Issues](https://github.com/Abrar-Islam-Oitijjho/Multimodal-Fashion-Assistant/issues)
+This project can be summarized as:
 
-##  Acknowledgments
+> Developed a LangGraph-based multimodal fashion retrieval agent using SigLIP2 embeddings, FAISS similarity search, and reasoning-based query interpretation for text, image, and image-text product retrieval. Improved the pipeline with dynamic retrieval routing, structured product-intent extraction, separate image/text retrieval paths, category-aware filtering, reranking, self-checking, and FastAPI REST endpoints for online deployment.
 
--   📚 **Libraries/Tools used**:
-    -   [PyTorch](https://pytorch.org/) - Deep learning framework
-    -   [Transformers](https://huggingface.co/transformers/) - NLP library
-    -   [Anaconda](https://anaconda.org/) – Python distribution with environment and package management
--   🌟 **Special thanks**: To the open-source community for their invaluable contributions.
+## Contributing
+
+Contributions are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push to your branch.
+5. Open a pull request.
+
+## Support
+
+- Email: abraroitijjho35@gmail.com
+- Issues: Use the GitHub Issues tab in the repository.
+
+## Acknowledgments
+
+- [DeepFashion2](https://github.com/switchablenorms/DeepFashion2?tab=readme-ov-file) for the dataset structure.
+- [PyTorch](https://pytorch.org/) for deep learning.
+- [Hugging Face Transformers](https://huggingface.co/transformers/) for model loading.
+- [FAISS](https://faiss.ai/) for fast similarity search.
+- [FastAPI](https://fastapi.tiangolo.com/) for API deployment.
+- [LangGraph](https://www.langchain.com/langgraph) for workflow orchestration.
