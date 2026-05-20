@@ -127,7 +127,7 @@ The updated pipeline follows these main steps:
 The current stable LangGraph file is:
 
 <p align="center">
-  <img src="assets/fashion_graph_step7_horizontal.png" alt="Step 7 LangGraph workflow for the Multimodal Fashion Assistant" width="100%">
+  <img src="assets/fashion_graph_step7.png" alt="LangGraph workflow" width="70%" style="transform: rotate(90deg);>
 </p>
 
 ### Step 1: Intent detection and strategy routing
