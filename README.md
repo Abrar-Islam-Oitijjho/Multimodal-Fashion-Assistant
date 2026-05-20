@@ -124,10 +124,8 @@ The updated pipeline follows these main steps:
 
 ## Agent Workflow
 
-The current stable LangGraph file is:
-
 <p align="center">
-  <img src="assets/fashion_graph_step7.png" alt="LangGraph workflow" width="70%" style="transform: rotate(90deg);>
+  <img src="assets/fashion_graph_step7.png" alt="LangGraph workflow" width="70%">
 </p>
 
 ### Step 1: Intent detection and strategy routing
