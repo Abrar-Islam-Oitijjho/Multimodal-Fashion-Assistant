@@ -55,7 +55,7 @@ The first version of this project was notebook-heavy. The updated version moves 
 
 This project uses a processed subset of the [DeepFashion2 Dataset](https://github.com/switchablenorms/DeepFashion2?tab=readme-ov-file).
 
-The expected data layout is:
+The data layout is:
 
 ```text
 Data/
@@ -69,7 +69,7 @@ Data/
 └── faiss_text_siglip2_base.index  # FAISS text index
 ```
 
-Product image names can follow the format used in the dataset, such as:
+Product image names follow the format used in the dataset, such as:
 
 ```text
 000002_item1.jpg
@@ -85,7 +85,7 @@ http://127.0.0.1:8000/images/000002_item2.jpg
 
 ## Method
 
-The updated pipeline follows these main steps:
+The pipeline follows these main steps:
 
 1. **Preprocessing**: Read DeepFashion2 annotations and prepare product metadata.
 2. **Image Cropping**: Crop clothing items using annotation bounding boxes.
