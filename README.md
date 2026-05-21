@@ -15,7 +15,6 @@ An agentic multimodal fashion retrieval and reasoning system that searches fashi
 ## 📋 Table of Contents
 
 - [About](#about)
-- [What Changed in the Updated Version](#what-changed-in-the-updated-version)
 - [Features](#features)
 - [Data](#data)
 - [Method](#method)
@@ -37,26 +36,6 @@ An agentic multimodal fashion retrieval and reasoning system that searches fashi
 The Multimodal Fashion Assistant is a retrieval and reasoning system for fashion product search. It uses SigLIP2-base embeddings for image and text similarity search, FAISS for fast nearest-neighbor retrieval, and a reasoning layer to interpret user intent and generate a better search description.
 
 The first version of this project was notebook-heavy. The updated version moves the main logic into reusable Python modules, adds a configuration layer, loads models and indexes through services, and runs the retrieval pipeline through a LangGraph workflow. The system can now also be served through FastAPI REST endpoints for online application deployment.
-
-## What Changed in the Updated Version
-
-The updated repo focuses on turning the original fashion retrieval notebook into a cleaner agentic backend.
-
-### Main improvements
-
-- Cleaned and modularized notebook logic into Python files under `app/`.
-- Added centralized path and model settings in `app/config.py`.
-- Added reusable loading services for metadata, FAISS indexes, embeddings, and reasoning components.
-- Added LangGraph workflow orchestration instead of running every step manually in a notebook.
-- Added intent detection to identify text-only, image-only, and image-text searches.
-- Added dynamic retrieval strategy selection for text-only, image-only, image-priority multimodal, and balanced multimodal search.
-- Added structured product query extraction for category, color, pattern, collar, sleeve, material, fit, style, and constraints.
-- Added separate image and text retrieval paths, then merged candidates by product identity.
-- Added category and attribute-aware soft filtering.
-- Added reranking over a larger candidate pool before selecting final results.
-- Added a quality self-check node with one retry path when the first retrieval result is weak.
-- Added FastAPI endpoints for text search and image/image-text search.
-- Added image URL support in API responses so retrieved product images can be viewed directly in the browser.
 
 ## Features
 
